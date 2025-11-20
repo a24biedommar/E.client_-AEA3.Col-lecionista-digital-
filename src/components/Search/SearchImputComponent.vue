@@ -1,46 +1,50 @@
 <script setup>
+//IMPORTACIONS NECESSARIES
 import { ref } from "vue";
 import { getProductByID } from "../../services/communicationManager.js";
 
-//1. DECLAREM LES VARIABLES REACTIVES
+//DEFINIM ELS EVENTS QUE EMET EL COMPONENT AL PARE (SEARCHVIEW)
+const emit = defineEmits(["search-done"]);
+
+//VARIABLES REACTIVES PER A GESTIONAR L'INPUT I EL PRODUCTE TROBAT
 const searchId = ref("");
 const product = ref(null);
 
-//2. DECLAREM LES FUNCIONS
-
-//FUNCIO PER CERCA PRODUCTE
+//FUNCIO PER A GESTIONAR LA CERCA DEL PRODUCTE PER ID
 async function handleSearch() {
-  //SI NO HI HA ID, ALERTA I TORNAR
   if (searchId.value == "") {
     alert("Escribe un ID primero");
     return;
   }
-  //CRIDAR A LA FUNCIO DE COMMUNICATION MANAGER
+  emit("search-done"); //AVISEM AL PARE QUE S'HA INICIAT UNA CERCA
+
   const response = await getProductByID(searchId.value);
   product.value = response.data;
 }
 </script>
 
 <template>
-  <div>
-    <div class="search-container">
-      <h1>Cercar Producte per ID</h1>
-
-      <div class="controls">
-        <input
-          v-model="searchId"
-          type="number"
-          placeholder="Introdueix ID (ex: 1)..."
-        />
-        <button @click="handleSearch">Cercar</button>
-      </div>
-
-      <div v-if="product" class="product-detail">
-        <h2>{{ product.title }}</h2>
-        <img :src="product.image" :alt="product.title" />
-        <p class="category">{{ product.category }}</p>
-        <p class="description">{{ product.description }}</p>
-        <p class="price">{{ product.price }}€</p>
+  <div class="search-input-wrapper">
+    <div class="input-group">
+      <!-- CARREGUEM EL INPUT ON BUSCAR I EL SEU BOTO (AQUEST AL FER CLICK TRUCA A HANDLESEARCH)-->
+      <input
+        v-model="searchId"
+        type="number"
+        class="main-search-input"
+        placeholder="¿Qué estás buscando? (ID)"
+      />
+      <button @click="handleSearch" class="search-btn">BUSCAR</button>
+    </div>
+    <!-- MOSTREM ELS DETALLS DEL PRODUCTE TROBAT SI PRODUCTE TÉ VALOR  -->
+    <div v-if="product" class="single-product-result">
+      <div class="product-content">
+        <img :src="product.image" :alt="product.title" class="result-image" />
+        <div class="product-details">
+          <h2>{{ product.title }}</h2>
+          <span class="category-tag">{{ product.category }}</span>
+          <p class="description">{{ product.description }}</p>
+          <p class="price-tag">{{ product.price }}€</p>
+        </div>
       </div>
     </div>
   </div>
