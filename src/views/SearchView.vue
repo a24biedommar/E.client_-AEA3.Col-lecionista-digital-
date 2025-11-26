@@ -9,6 +9,7 @@ import {
   getProductsByCategory,
   getProductByID,
 } from "../services/communicationManager.js";
+import FavoriteButton from "../components/FavoriteButtonComponent.vue";
 
 // VARIABLES REACTIVES PER A GESTIONAR ELS PRODUCTES DE LA CATEGORIA SELECCIONADA
 const categoryProducts = ref([]); // LLISTA D'ITEMS DE LA CATEGORIA ACTUAL
@@ -16,7 +17,6 @@ const currentCategory = ref(""); // NOM DE LA CATEGORIA ACTUAL
 const isCategoryActive = ref(false); // INDICA SI HI HA UNA CATEGORIA ACTIVA (PER NO MOSTRAR TOTS ELS ITEMS)
 const isSearchActive = ref(false); // INDICA SI S'HA REALITZAT UNA CERCA (PER NO MOSTRAR ELS ITEMS DE LA CATEGORIA)
 const searchProducts = ref([]); // GUARDA EL RESULTAT DE LA CERCA
-
 // FUNCIO PER A CARREGAR ELS PRODUCTES DE LA CATEGORIA SELECCIONADA (REP LES DADES DEL COMPONENT FILLS (SEARCHCATEGORYCOMPONENT))
 async function handleCategoryLoad(category) {
   currentCategory.value = category;
@@ -44,42 +44,36 @@ async function handleSearchActive(id) {
 <template>
   <div class="search-page-layout">
     <header class="search-header">
-      <!-- CATEGORIES DISPONIBLES, AL FER CLICK A UNA ES CARREGUEN ELS ITEMS D'AQUESTA CRIDANT A HANDLECATEGORYLOAD -->
       <SearchCategoryComponent @category-selected="handleCategoryLoad" />
     </header>
 
     <main class="search-main">
-      <!-- INPUT DE CERCA GENERAL -->
       <SearchBar @search="handleSearchActive" />
     </main>
 
     <section class="search-footer">
-      <!-- MOSTRAR ELS ITEMS DE LA CATEGORIA SELECCIONADA (IF) -->
       <div v-if="isCategoryActive" class="category-results">
         <h3>Viendo categoría: {{ currentCategory }}</h3>
-
-        <!-- PASSEM L'ITEM AL COMPONENT ITEMCARD AMB :ITEM -->
         <div class="items-grid-container">
           <ItemCard
             v-for="prod in categoryProducts"
             :key="prod.id"
             :item="prod"
-          />
+          >
+            <FavoriteButton :item="prod" />
+          </ItemCard>
         </div>
       </div>
 
       <div v-else-if="isSearchActive" class="search-results">
         <h3>Resultat de la cerca:</h3>
         <div class="items-grid-container">
-          <ItemCard
-            v-for="prod in searchProducts"
-            :key="prod.id"
-            :item="prod"
-          />
+          <ItemCard v-for="prod in searchProducts" :key="prod.id" :item="prod">
+            <FavoriteButton :item="prod" />
+          </ItemCard>
         </div>
       </div>
 
-      <!-- MOSTRAR TOTS ELS ITEMS (ELSE) -->
       <ShowAllItems v-else />
     </section>
   </div>

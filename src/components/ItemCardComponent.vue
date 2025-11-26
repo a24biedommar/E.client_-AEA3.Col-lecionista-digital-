@@ -11,5 +11,10 @@ defineProps(["item"]);
       <h4>{{ item.title }}</h4>
       <p>{{ item.price }} €</p>
     </div>
+
+    <div class="card-action">
+      <slot></slot>
+    </div>
+    <hr />
   </div>
 </template>
