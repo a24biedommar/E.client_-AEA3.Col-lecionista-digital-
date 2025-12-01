@@ -5,39 +5,38 @@ import SearchBar from "../components/Search/SearchBarComponent.vue";
 import SearchCategoryComponent from "../components/Search/SearchCategoryComponent.vue";
 import ShowAllItems from "../components/ShowAllItemsComponent.vue";
 import ItemCard from "../components/ItemCardComponent.vue";
-import {
-  getProductsByCategory,
-  getProductByID,
-} from "../services/communicationManager.js";
 import FavoriteButton from "../components/FavoriteButtonComponent.vue";
+import { useSearch } from "../composables/userSearch.js";
 
 // VARIABLES REACTIVES PER A GESTIONAR ELS PRODUCTES DE LA CATEGORIA SELECCIONADA
-const categoryProducts = ref([]); // LLISTA D'ITEMS DE LA CATEGORIA ACTUAL
 const currentCategory = ref(""); // NOM DE LA CATEGORIA ACTUAL
 const isCategoryActive = ref(false); // INDICA SI HI HA UNA CATEGORIA ACTIVA (PER NO MOSTRAR TOTS ELS ITEMS)
 const isSearchActive = ref(false); // INDICA SI S'HA REALITZAT UNA CERCA (PER NO MOSTRAR ELS ITEMS DE LA CATEGORIA)
-const searchProducts = ref([]); // GUARDA EL RESULTAT DE LA CERCA
+// --- GESTIÓ DE L'ESTAT (COMPOSABLE) ---
+const { query, results, loading, error, searchId, searchByCategory } =
+  useSearch();
+
 // FUNCIO PER A CARREGAR ELS PRODUCTES DE LA CATEGORIA SELECCIONADA (REP LES DADES DEL COMPONENT FILLS (SEARCHCATEGORYCOMPONENT))
 async function handleCategoryLoad(category) {
   currentCategory.value = category;
-  const response = await getProductsByCategory(category);
-  categoryProducts.value = response.data;
+  await searchByCategory(category);
   isCategoryActive.value = true;
   isSearchActive.value = false;
 }
-// FUNCIO QUE SE EXECUTA QUE S'EXECUTA QUAN EL FILL (SEARCHIMPUT) EMET 'SEARCH-DONE'
-async function handleSearchActive(id) {
-  // Desactivem la categoria activa
-  isCategoryActive.value = false;
-  // Activem l'estat de cerca
-  isSearchActive.value = true;
-  // Netejem els productes de cerca
-  searchProducts.value = [];
 
-  // Cridem a l afunció del servei per obtenir l'item per ID
-  const response = await getProductByID(id);
-  // Guardem el resultat a la nostra nova variable (dins d'un array)
-  searchProducts.value = [response.data];
+// FUNCIO QUE SE EXECUTA QUE S'EXECUTA QUAN EL FILL (SEARCHIMPUT) EMET 'SEARCH-DONE'
+async function handleSearchActive(valor) {
+  //Desactivem la categoria
+  isCategoryActive.value = false;
+
+  //Activem el mode cerca
+  isSearchActive.value = true;
+
+  //Passem el valor al composable (query)
+  query.value = valor;
+
+  //Executem la funció search del composable
+  await searchId();
 }
 </script>
 
@@ -49,17 +48,16 @@ async function handleSearchActive(id) {
 
     <main class="search-main">
       <SearchBar @search="handleSearchActive" />
+
+      <div v-if="loading" class="loading-message">Carregant...</div>
+      <div v-if="error" class="error-message">{{ error }}</div>
     </main>
 
-    <section class="search-footer">
+    <section class="search-footer" v-if="!loading">
       <div v-if="isCategoryActive" class="category-results">
         <h3>Viendo categoría: {{ currentCategory }}</h3>
         <div class="items-grid-container">
-          <ItemCard
-            v-for="prod in categoryProducts"
-            :key="prod.id"
-            :item="prod"
-          >
+          <ItemCard v-for="prod in results" :key="prod.id" :item="prod">
             <FavoriteButton :item="prod" />
           </ItemCard>
         </div>
@@ -68,7 +66,7 @@ async function handleSearchActive(id) {
       <div v-else-if="isSearchActive" class="search-results">
         <h3>Resultat de la cerca:</h3>
         <div class="items-grid-container">
-          <ItemCard v-for="prod in searchProducts" :key="prod.id" :item="prod">
+          <ItemCard v-for="prod in results" :key="prod.id" :item="prod">
             <FavoriteButton :item="prod" />
           </ItemCard>
         </div>

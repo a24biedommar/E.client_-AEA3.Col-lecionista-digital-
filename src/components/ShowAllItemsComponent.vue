@@ -1,15 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { getAllProducts } from "../services/communicationManager.js";
+import { onMounted } from "vue";
 import ItemCard from "./ItemCardComponent.vue";
 
 import FavoriteButton from "./FavoriteButtonComponent.vue";
 
-const products = ref([]);
+import { useSearch } from "../composables/userSearch.js";
+
+const { results, loading, error, searchAll } = useSearch();
 
 onMounted(async () => {
-  const response = await getAllProducts();
-  products.value = response.data;
+  await searchAll();
 });
 </script>
 
@@ -18,7 +18,7 @@ onMounted(async () => {
     <h3 class="section-title">Tots els productes disponibles</h3>
 
     <div class="items-grid-container">
-      <ItemCard v-for="prod in products" :key="prod.id" :item="prod">
+      <ItemCard v-for="prod in results" :key="prod.id" :item="prod">
         <FavoriteButton :item="prod" />
       </ItemCard>
     </div>
