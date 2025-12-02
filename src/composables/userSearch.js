@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useApi } from "./api";
+import { useApi } from "./useApi";
 
 export const useSearch = () => {
   const api = useApi();

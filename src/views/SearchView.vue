@@ -72,7 +72,7 @@ async function handleSearchActive(valor) {
         </div>
       </div>
 
-      <ShowAllItems v-else />
+      <ShowAllItems />
     </section>
   </div>
 </template>

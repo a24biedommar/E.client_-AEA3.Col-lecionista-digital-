@@ -1,12 +1,12 @@
 import axios from "axios";
 
-// 1. Configuración de la instancia base
+//Configuració de la instància base
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: { "Content-Type": "application/json" },
 });
 
-// 2. Definición del Composable
+//Definim el composable
 export const useApi = () => {
   const get = (url, config = {}) => apiClient.get(url, config);
 
