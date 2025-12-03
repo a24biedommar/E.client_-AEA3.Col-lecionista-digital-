@@ -3,7 +3,8 @@ import { ref } from "vue";
 import { GoogleGenerativeAI } from "@google/generative-ai"; // USAR ESTA LIBRERÍA
 
 // Inicializamos la instancia fuera del hook para no recrearla en cada llamada
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY);
+
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_API_KEY);
 
 export const useGemini = () => {
   const aiResponse = ref("");

@@ -1,8 +1,4 @@
-<script setup>
-import { useGemini } from "../composables/useGemini";
-
-const { aiResponse, isGenerating, generateCreativeText } = useGemini();
-</script>
+<script setup></script>
 <template>
   <div class="item-detail">
     <h1>Detall de l'Element</h1>

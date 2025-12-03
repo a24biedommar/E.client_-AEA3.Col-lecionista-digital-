@@ -55,7 +55,7 @@ async function handleSearchActive(valor) {
 
     <section class="search-footer" v-if="!loading">
       <div v-if="isCategoryActive" class="category-results">
-        <h3>Viendo categoría: {{ currentCategory }}</h3>
+        <h3>Veient categoría: {{ currentCategory }}</h3>
         <div class="items-grid-container">
           <ItemCard v-for="prod in results" :key="prod.id" :item="prod">
             <FavoriteButton :item="prod" />
@@ -65,6 +65,9 @@ async function handleSearchActive(valor) {
 
       <div v-else-if="isSearchActive" class="search-results">
         <h3>Resultat de la cerca:</h3>
+
+        <p v-if="results.length === 0">No s'han trobat resultats!</p>
+
         <div class="items-grid-container">
           <ItemCard v-for="prod in results" :key="prod.id" :item="prod">
             <FavoriteButton :item="prod" />
@@ -72,7 +75,7 @@ async function handleSearchActive(valor) {
         </div>
       </div>
 
-      <ShowAllItems />
+      <ShowAllItems v-if="!isCategoryActive && !isSearchActive" />
     </section>
   </div>
 </template>
