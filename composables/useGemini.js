@@ -12,7 +12,7 @@ export const useGemini = () => {
     aiResponse.value = "";
     try {
       // 1. Instanciamos el modelo CORRECTO que tienes en tu lista
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       // 2. Definimos el prompt
       const prompt = `Digas complements per a aquesta peça de roba/complement/hardware"${itemName}". Màxim 20 paraules.`;
