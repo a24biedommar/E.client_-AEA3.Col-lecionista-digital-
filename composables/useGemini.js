@@ -15,7 +15,7 @@ export const useGemini = () => {
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       // 2. Definimos el prompt
-      const prompt = `Digas complements per a aquesta peça de roba/complement/hardware"${itemName}". Màxim 20 paraules.`;
+      const prompt = `Actua com un assistent de compres expert en moda i tecnologia. Suggereix 1 o 2 productes ideals per combinar amb "${itemName}". Sigues breu, convincent i original. Màxim 30 paraules.`;
 
       // 3. Llamamos a generateContent (Esta librería permite pasar el string directo)
       const result = await model.generateContent(prompt);
